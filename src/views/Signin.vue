@@ -63,9 +63,13 @@ export default {
       this.isLoading = true;
       this.error = null;
       this.$store
-        .dispatch("signIn")
-        .then(() => {
+        .dispatch("signIn", {
+          username: this.username,
+          password: this.password
+        })
+        .then(user => {
           // successful log in
+          console.log("here");
         })
         .catch(error => {
           if (error.response) {
