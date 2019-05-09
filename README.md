@@ -9,6 +9,9 @@ There is one component created for Navbar and 3 views for Doctor, Patient and Si
 JS Framework: Vue.JS
 Css framework: Bulma with buefy 
 
+## TODO
+all of the front end field validations (email, phone, city....)
+
 
 ## Project setup
 ```
