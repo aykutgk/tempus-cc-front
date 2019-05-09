@@ -2,7 +2,7 @@
 
 All of the environment variables (api host for now)stored in .env.development file.
 
-This application uses Vuex for state management (./src/store.js) and Vue Routing (./src/store.js).
+This application uses Vuex for state management (./src/store.js) and vue-router for routing (./src/store.js).
 
 There is one component created for Navbar and 3 views for Doctor, Patient and Signin.
 
