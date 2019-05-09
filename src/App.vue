@@ -1,9 +1,39 @@
 <template>
   <div id="app">
-    <router-view/>
+    <navbar-top/>
+    <router-view v-show="!loading"/>
   </div>
 </template>
+<script>
+import NavbarTop from "@/components/NavbarTop.vue";
 
+export default {
+  name: "app",
+  components: {
+    NavbarTop
+  },
+  data() {
+    return {
+      loading: true
+    };
+  },
+  beforeMount() {
+    this.$store
+      .dispatch("didUserSignIn")
+      .then(user => {
+        if (!user) {
+          this.$router.push({ name: "sign-in" });
+        }
+      })
+      .catch(err => {
+        this.$router.push({ name: "sign-in" });
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+  }
+};
+</script>
 <style>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;

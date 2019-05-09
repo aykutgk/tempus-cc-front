@@ -4,18 +4,18 @@
       <form @submit.prevent="signInAction">
         <fieldset :disabled="isLoading">
           <p
-            class="is-size-2 has-text-weight-semibold has-text-grey"
-            style="margin-top: 30px;"
+            class="is-size-3 has-text-weight-semibold has-text-grey-light"
+            style="margin-top: 20px;"
           >Sign In</p>
           <div class="notification is-danger" v-if="error" style="margin-top: 10px;">{{error}}</div>
           <div class="field" style="margin-top: 30px;">
-            <!-- <label class="label">Username</label> -->
+            <label class="label has-text-left">Username</label>
             <div class="control">
               <input class="input" v-model="username" type="text" placeholder="Username">
             </div>
           </div>
           <div class="field" style="margin-top: 30px;">
-            <!-- <label class="label">Password</label> -->
+            <label class="label has-text-left">Password</label>
             <div class="control">
               <input class="input" v-model="password" type="password" placeholder="Password">
             </div>
@@ -23,7 +23,7 @@
           <div class="field" style="margin-top: 30px;">
             <p class="control">
               <button
-                class="button is-primary is-rounded is-fullwidth"
+                class="button is-dark is-rounded is-fullwidth"
                 :class="{ 'is-loading': isLoading }"
                 type="submit"
               >Sign In</button>
@@ -68,8 +68,12 @@ export default {
           password: this.password
         })
         .then(user => {
-          // successful log in
-          console.log("here");
+          const { type, uuid } = user;
+          if (type === "doctor") {
+            this.$router.push({ name: "doctor-home" });
+          } else {
+            this.$router.push({ name: "patient-home" });
+          }
         })
         .catch(error => {
           if (error.response) {

@@ -15,20 +15,24 @@ Axios.interceptors.request.use(function (config) {
 
 export default new Vuex.Store({
   state: {
-    doctor: null,
-    patient: null,
+    userUUID: null,
+    userType: null,
+    user: null,
     patients: null,
   },
   mutations: {
     UPDATE_USER(state, user) {
-      if (user.type === 'doctor') {
-        state.doctor = user;
-      } else {
-        state.patient = user;
-      }
+      state.user = user;
     },
   },
   actions: {
+    didUserSignIn({ commit }, payload) {
+      const token = window.localStorage.getItem('token');
+      if (!token) {
+        return;
+      }
+      return this.dispatch('getMyProfile');
+    },
     signIn({ commit }, payload) {
       return Axios({
         method: "post",
@@ -41,8 +45,19 @@ export default new Vuex.Store({
         return user;
       });
     },
-    getPatient({ commit }, uuid) {
-
+    signOut({ commit }) {
+      commit('UPDATE_USER', null);
+      window.localStorage.removeItem("token");
+    },
+    getMyProfile({ commit }) {
+      return Axios({
+        method: "get",
+        url: `/users/me`
+      }).then(({ data }) => {
+        const user = data;
+        commit('UPDATE_USER', user);
+        return user;
+      });
     },
     getPatients({ commit }) {
 
@@ -55,6 +70,7 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    user: state => state.user,
     genericErrorMessage: state => "Something went wrong! Please try again.",
     usernamePasswordMinimumLengthErrorMessage: state => "Username and password must be minimum 6 characters!",
     usernamePasswordErrorMessage: state => "Your username or password is invalid!",

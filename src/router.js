@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Signin from './views/Signin.vue';
+import DoctorHome from './views/DoctorHome.vue';
+import PatientHome from './views/PatientHome.vue';
 
 Vue.use(Router);
 
@@ -10,7 +12,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'signin',
+      name: 'sign-in',
       component: Signin,
       meta: {
         requiresAuth: false,
@@ -19,15 +21,16 @@ export default new Router({
     {
       path: '/d',
       name: 'doctor-home',
-      component: Signin,
+      component: DoctorHome,
       meta: {
         requiresAuth: true,
+        doctorOnly: true,
       },
     },
     {
       path: '/p',
       name: 'patient-home',
-      component: Signin,
+      component: PatientHome,
       meta: {
         requiresAuth: true,
       },
