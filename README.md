@@ -10,7 +10,7 @@ JS Framework: Vue.JS
 Css framework: Bulma with buefy 
 
 ## TODO
-all of the front end field validations (email, phone, city....)
+all of the frontend input validations (email, phone, city....) are missing.
 
 
 ## Project setup
