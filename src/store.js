@@ -62,8 +62,16 @@ export default new Vuex.Store({
     getPatients({ commit }) {
 
     },
-    updatePatient({ commit }, payload) {
-
+    updatePatientProfile({ commit }, payload) {
+      return Axios({
+        method: "put",
+        url: '/users/me',
+        data: payload,
+      }).then(({ data }) => {
+        const user = data;
+        commit('UPDATE_USER', user);
+        return user;
+      });
     },
     searchPatientByName({ commit }, name) {
 
@@ -74,6 +82,7 @@ export default new Vuex.Store({
     genericErrorMessage: state => "Something went wrong! Please try again.",
     usernamePasswordMinimumLengthErrorMessage: state => "Username and password must be minimum 6 characters!",
     usernamePasswordErrorMessage: state => "Your username or password is invalid!",
+    profileUpdateMessage: state => "Profile updated successfully.",
   }
 });
 /* eslint-enable */

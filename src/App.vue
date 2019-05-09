@@ -23,6 +23,12 @@ export default {
       .then(user => {
         if (!user) {
           this.$router.push({ name: "sign-in" });
+        } else {
+          if (user.type === "doctor") {
+            this.$router.push({ name: "doctor-home" });
+          } else {
+            this.$router.push({ name: "patient-home" });
+          }
         }
       })
       .catch(err => {

@@ -3,7 +3,7 @@
     <b-loading :is-full-page="true" :active.sync="isLoading"></b-loading>
     <div class="box" v-if="!isLoading && user">
       <form @submit.prevent="editProfileAction">
-        <fieldset :disabled="!editMode">
+        <fieldset :disabled="!editMode || editProfileLoading">
           <p
             class="has-text-left is-size-3 has-text-weight-semibold has-text-grey-light"
             style="margin-top: 10px;"
@@ -17,11 +17,23 @@
                 </div>
               </div>
             </div>
-            <div class="column">
+            <div class="column" v-show="!editMode">
               <div class="field" style="margin-top: 20px;">
                 <label class="label has-text-left">Age</label>
                 <div class="control">
                   <input class="input" :value="getUserAge()" type="text" placeholder="Age">
+                </div>
+              </div>
+            </div>
+            <div class="column" v-show="editMode">
+              <div class="field" style="margin-top: 20px;">
+                <label class="label has-text-left">Birth Date</label>
+                <div class="control">
+                  <b-datepicker
+                    v-model="user.Patient.birthDateFormatted"
+                    placeholder="Birth Date"
+                    editable
+                  ></b-datepicker>
                 </div>
               </div>
             </div>
@@ -100,11 +112,15 @@
           </div>
           <div class="field" style="margin-top: 40px;" v-show="editMode">
             <p class="control">
-              <button class="button is-light is-rounded" @click="cancelEditProfile">Cancel</button>
+              <button
+                class="button is-light is-rounded"
+                @click="cancelEditProfile"
+                type="reset"
+              >Cancel</button>
 
               <button
                 class="button is-dark is-rounded is-pulled-right"
-                @click="editProfileAction"
+                :class="{ 'is-loading': editProfileLoading }"
                 type="submit"
               >Save</button>
             </p>
@@ -115,7 +131,7 @@
             <button
               class="button is-dark is-rounded is-fullwidth"
               @click="editProfile"
-              type="submit"
+              type="button"
             >Edit your profile</button>
           </p>
         </div>
@@ -131,7 +147,8 @@ export default {
     return {
       isLoading: true,
       editMode: false,
-      user: null
+      user: null,
+      editProfileLoading: false
     };
   },
   methods: {
@@ -142,15 +159,40 @@ export default {
       this.editMode = true;
     },
     cancelEditProfile() {
-      this.deepCopyUser();
       this.editMode = false;
+      this.editProfileLoading = false;
+      this.deepCopyUser();
     },
-    editProfileAction() {},
+    editProfileAction() {
+      this.editProfileLoading = true;
+      this.$store
+        .dispatch("updatePatientProfile", this.user)
+        .then(() => {
+          this.$toast.open({
+            duration: 2000,
+            message: this.$store.getters.profileUpdateMessage,
+            position: "is-bottom",
+            type: "is-success"
+          });
+        })
+        .catch(err => {
+          this.$toast.open({
+            duration: 5000,
+            message: this.$store.getters.genericErrorMessage,
+            position: "is-bottom",
+            type: "is-danger"
+          });
+        })
+        .finally(() => {
+          this.cancelEditProfile();
+        });
+    },
     deepCopyUser() {
       const user = this.$store.getters.user;
       const userCopy = {
         Patient: {
           birthDate: user.Patient.birthDate,
+          birthDateFormatted: moment(user.Patient.birthDate).toDate(),
           address: user.Patient.address,
           city: user.Patient.city,
           state: user.Patient.state,
@@ -172,7 +214,6 @@ export default {
         if (!user) {
           this.$router.push({ name: "sign-in" });
         } else {
-          this.$store.commit("UPDATE_USER", user);
           this.deepCopyUser();
         }
       })
