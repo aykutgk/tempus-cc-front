@@ -67,6 +67,9 @@ export default {
           username: this.username,
           password: this.password
         })
+        .then(() => {
+          return this.$store.dispatch("getMyProfile");
+        })
         .then(user => {
           const { type, uuid } = user;
           if (type === "doctor") {

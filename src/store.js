@@ -41,7 +41,6 @@ export default new Vuex.Store({
       }).then(({ data }) => {
         const { token, user } = data;
         window.localStorage.setItem("token", token);
-        commit('UPDATE_USER', user);
         return user;
       });
     },
@@ -49,7 +48,10 @@ export default new Vuex.Store({
       commit('UPDATE_USER', null);
       window.localStorage.removeItem("token");
     },
-    getMyProfile({ commit }) {
+    getMyProfile({ commit, state }) {
+      if (state.user) {
+        return Promise.resolve(state.user);
+      }
       return Axios({
         method: "get",
         url: `/users/me`
@@ -59,22 +61,26 @@ export default new Vuex.Store({
         return user;
       });
     },
-    getPatients({ commit }) {
-
+    getDoctorPatients({ commit }, searchInput) {
+      return Axios({
+        method: "get",
+        url: `/doctors/patients/`,
+        params: { name: searchInput }
+      }).then(({ data }) => {
+        const patients = data;
+        return patients;
+      });
     },
     updatePatientProfile({ commit }, payload) {
       return Axios({
         method: "put",
-        url: '/users/me',
+        url: '/patients/me',
         data: payload,
       }).then(({ data }) => {
         const user = data;
         commit('UPDATE_USER', user);
         return user;
       });
-    },
-    searchPatientByName({ commit }, name) {
-
     },
   },
   getters: {
