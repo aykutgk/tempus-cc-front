@@ -48,11 +48,9 @@ export default {
   },
   methods: {
     isUsernameValid() {
-      // Minimum username length is 5
       return this.username && this.username.length >= 6;
     },
     isPasswordValid() {
-      // Minimum password length is 8
       return this.password && this.password.length >= 6;
     },
     signInAction() {
